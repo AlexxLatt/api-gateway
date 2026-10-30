@@ -1,0 +1,45 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: flow-manager
+              uri: lb://flow-manager-service
+              predicates:
+                - Path=/files/**
+              filters:
+                - RewritePath=/files/(?<segment>.*), /api/v1/files/${segment}
+
+            - id: flow-manager-docs
+              uri: lb://flow-manager-service
+              predicates:
+                - Path=/v3/api-docs
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
+    register-with-eureka: true
+    fetch-registry: true
+
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: Flow Manager
+        url: /v3/api-docs
+    path: /swagger-ui.html
