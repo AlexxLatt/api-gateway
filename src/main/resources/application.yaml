@@ -17,10 +17,6 @@ spring:
               filters:
                 - RewritePath=/files/(?<segment>.*), /api/v1/files/${segment}
 
-            - id: flow-manager-docs
-              uri: lb://flow-manager-service
-              predicates:
-                - Path=/v3/api-docs
 eureka:
   client:
     service-url:
@@ -36,10 +32,3 @@ management:
     web:
       exposure:
         include: health,info
-
-springdoc:
-  swagger-ui:
-    urls:
-      - name: Flow Manager
-        url: /v3/api-docs
-    path: /swagger-ui.html
