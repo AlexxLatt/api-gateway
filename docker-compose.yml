@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   api-gateway:
     build: .
@@ -6,9 +8,30 @@ services:
       - "8085:8085"
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      - keycloak
+    networks:
+      - microservices-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0.0
+    container_name: keycloak
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    ports:
+      - "8091:8080"
+    command: start-dev
+    volumes:
+      - keycloak-data:/opt/keycloak/data
     networks:
       - microservices-network
 
 networks:
   microservices-network:
     external: true
+    name: microservices-network
+
+
+volumes:
+  keycloak-data:
